@@ -12,8 +12,9 @@ def load_wrapper(func):
     return wrapper
 
 class Food():
-    def __init__(self, name, calories, protein, fat, carbs,
-                 gluten_free=False, dairy_free=False):
+    def __init__(self, name: str, calories: int, protein: float, fat: float, carbs: float,
+                 gluten_free: bool = False, dairy_free: bool = False):
+        
         self.name = name
         self.calories = calories
         self.protein = protein
@@ -41,13 +42,14 @@ class FoodManager:
         self.data_file = data_file
         self.foods = self.load_foods()
 
-    def load_foods(self):
+    def load_foods(self): #1.3.3
         try:
             if self.data_file.exists():
                 with open(self.data_file, "r", encoding="utf-8") as f:
                     data = json.load(f)
                     foods = []
-                    for item in data:
+                    while data: #1.1.4
+                        item = data.pop(0)
                         food = Food(
                             name=item.get("name", ""),
                             calories=item.get("calories", 0),
@@ -65,18 +67,18 @@ class FoodManager:
             print(f"Error converting JSON to Food objects: {e}")
         return []
 
-    @load_wrapper
+    @load_wrapper #1.2.1
     def add_food(self, name, calories, protein, fat, carbs, gluten_free=False, dairy_free=False):
         food = Food(name, calories, protein, fat, carbs, gluten_free, dairy_free)
         self.foods.append(food)
         self.save_foods()
         return food
 
-    @load_wrapper
+    @load_wrapper #1.2.1
     def list_foods(self, sort_by=None):
         foods = self.foods
         if sort_by and sort_by in ["calories", "protein", "fat", "carbs"]:
-            foods = sorted(foods, key=lambda x: getattr(x, sort_by))
+            foods = sorted(foods, key=lambda x: getattr(x, sort_by)) #1.2.2 & 1.2.3
         return foods
 
     @load_wrapper
@@ -86,11 +88,4 @@ class FoodManager:
                 return food
         return None
 
-    @load_wrapper
-    def filter_foods(self, **criteria):
-        filtered = self.foods
-        for key, value in criteria.items():
-            filtered = [
-                food for food in filtered if getattr(food, key, None) == value
-            ]
-        return filtered
+    

@@ -26,17 +26,17 @@ def main():
     get_parser.add_argument("--name", required=True, help="Name of the food to retrieve")
 
     filter_parser = subparsers.add_parser("filter-foods", help="Filter foods based on dietary preferences")
-    filter_parser.add_argument("--gluten-free", action="store_true", help="Filter for gluten-free foods")
-    filter_parser.add_argument("--dairy-free", action="store_true", help="Filter for dairy-free foods")
+    filter_parser.add_argument("--type", choices=["gluten-free", "dairy-free", "both"], help="Type of dietary filter")
 
     args = parser.parse_args()
 
+#1.1.3
     if args.command == "add-food":
         food = manager.add_food(args.name, args.calories, args.protein, args.fat, args.carbs, args.gluten_free, args.dairy_free)
         print(f"Added food: {food}")
     elif args.command == "list-foods":
         foods = manager.list_foods(args.sort)
-        for f in foods:
+        for f in foods: #1.1.4
             print(f)
     elif args.command == "get-food":
         food = manager.get_food(args.name)
@@ -45,14 +45,21 @@ def main():
         else:
             print("Food not found.")
     elif args.command == "filter-foods":
-        criteria = {}
-        if args.gluten_free:
-            criteria["gluten_free"] = True
-        if args.dairy_free:
-            criteria["dairy_free"] = True
-        foods = manager.filter_foods(**criteria)
-        for f in foods:
-            print(f)
+        foods = manager.list_foods()
+        if args.type == "gluten-free":
+            foods = [f for f in foods if f.gluten_free]
+            for f in foods: #1.1.4
+                print(f)
+        elif args.type == "dairy-free":
+            foods = [f for f in foods if f.dairy_free]
+            for f in foods: #1.1.4
+                print(f)
+        elif args.type == "both":
+            foods = [f for f in foods if f.gluten_free and f.dairy_free]
+            for f in foods: #1.1.4
+                print(f)
+        else:
+            print("No foods matching your criteria.")
     else:
         parser.print_help()
 

@@ -8,8 +8,8 @@ def load_wrapper(func):
         return result
     return wrapper
 
-class Meals: 
-    def __init__(self, name, foods: list[Food]):
+class Meals(): 
+    def __init__(self, name: str, foods: list[Food]):
         self.name = name
         self.foods = foods
 
@@ -27,8 +27,6 @@ class Meals:
             total["carbs"] += food.carbs
         return total
 
-    def __str__(self):
-        return f"Meal: {self.name}, Foods: {[food.name for food in self.foods]}"
 
 class MealManager:
     def __init__(self):
