@@ -3,32 +3,94 @@ from pathlib import Path
 
 DATA_FILE = Path("data/foods.json")
 
+def load_wrapper(func):
+    def wrapper(*args, **kwargs):
+        print(f"Calling {func.__name__} with args: {args}, kwargs: {kwargs}")
+        result = func(*args, **kwargs)
+        print(f"Finished {func.__name__}")
+        return result
+    return wrapper
 
-def load_foods():
-    if DATA_FILE.exists():
-        with open(DATA_FILE, "r", encoding="utf-8") as f:
-            return json.load(f)
-    return []
+class Food():
+    def __init__(self, name, calories, protein, fat, carbs,
+                 gluten_free=False, dairy_free=False):
+        self.name = name
+        self.calories = calories
+        self.protein = protein
+        self.fat = fat
+        self.carbs = carbs
+        self.gluten_free = gluten_free
+        self.dairy_free = dairy_free
 
-def save_foods(foods):
-    with open(DATA_FILE, "w", encoding="utf-8") as f:
-        json.dump(foods, f, indent=4)
+    def to_dictionary(self):
+        return {
+            "name": self.name,
+            "calories": self.calories,
+            "protein": self.protein,
+            "fat": self.fat,
+            "carbs": self.carbs,
+            "gluten_free": self.gluten_free,
+            "dairy_free": self.dairy_free,
+        }
+    
+    def __str__(self): 
+        return f"{self.name}: {self.calories} cal, {self.protein}g protein, {self.fat}g fat, {self.carbs}g carbs"
+    
+class FoodManager:
+    def __init__(self, data_file=DATA_FILE):
+        self.data_file = data_file
+        self.foods = self.load_foods()
 
-def add_food(name, calories, protein, fat, carbs):
-    foods = load_foods()
-    food = {
-        "name": name,
-        "calories": calories,
-        "protein": protein,
-        "fat": fat,
-        "carbs": carbs
-    }
-    foods.append(food)
-    save_foods(foods)
-    return food 
+    def load_foods(self):
+        try:
+            if self.data_file.exists():
+                with open(self.data_file, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    foods = []
+                    for item in data:
+                        food = Food(
+                            name=item.get("name", ""),
+                            calories=item.get("calories", 0),
+                            protein=item.get("protein", 0.0),
+                            fat=item.get("fat", 0.0),
+                            carbs=item.get("carbs", 0.0),
+                            gluten_free=item.get("gluten_free", False),
+                            dairy_free=item.get("dairy_free", False)
+                        )
+                        foods.append(food)
+                    return foods
+        except (IOError, json.JSONDecodeError) as e:
+            print(f"Error loading foods: {e}")
+        except Exception as e:
+            print(f"Error converting JSON to Food objects: {e}")
+        return []
 
-def list_foods(sort_by=None):
-    foods = load_foods()
-    if sort_by and sort_by in ["name", "calories", "protein", "fat", "carbs"]:
-        foods = sorted(foods, key=lambda x: x[sort_by])
-    return foods
+    @load_wrapper
+    def add_food(self, name, calories, protein, fat, carbs, gluten_free=False, dairy_free=False):
+        food = Food(name, calories, protein, fat, carbs, gluten_free, dairy_free)
+        self.foods.append(food)
+        self.save_foods()
+        return food
+
+    @load_wrapper
+    def list_foods(self, sort_by=None):
+        foods = self.foods
+        if sort_by and sort_by in ["calories", "protein", "fat", "carbs"]:
+            foods = sorted(foods, key=lambda x: getattr(x, sort_by))
+        return foods
+
+    @load_wrapper
+    def get_food(self, name):
+        for food in self.foods:
+            if food.name == name:
+                return food
+        return None
+
+    @load_wrapper
+    def filter_foods(self, **criteria):
+        filtered = self.foods
+        for key, value in criteria.items():
+            filtered = [
+                food for food in filtered if getattr(food, key, None) == value
+            ]
+        return filtered

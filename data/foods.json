@@ -1,0 +1,65 @@
+[
+    {
+        "name": "Chicken Breast",
+        "calories": 165,
+        "protein": 31,
+        "fat": 3.6,
+        "carbs": 0,
+        "gluten_free": true,
+        "dairy_free": true
+    },
+    {
+        "name": "Brown Rice",
+        "calories": 216,
+        "protein": 5,
+        "fat": 1.8,
+        "carbs": 45,
+        "gluten_free": true,
+        "dairy_free": true
+    },
+    {
+        "name": "Broccoli",
+        "calories": 55,
+        "protein": 4.7,
+        "fat": 0.6,
+        "carbs": 11,
+        "gluten_free": true,
+        "dairy_free": true
+    },
+    {
+        "name": "Milk",
+        "calories": 103,
+        "protein": 8,
+        "fat": 2.4,
+        "carbs": 12,
+        "gluten_free": true,
+        "dairy_free": false
+    },
+    {
+        "name": "Bread",
+        "calories": 79,
+        "protein": 3,
+        "fat": 1,
+        "carbs": 15,
+        "gluten_free": false,
+        "dairy_free": true
+    },
+    {
+        "name": "Cheddar Cheese",
+        "calories": 113,
+        "protein": 7,
+        "fat": 9,
+        "carbs": 0.4,
+        "gluten_free": true,
+        "dairy_free": false
+    },
+    {
+        "name": "Apple",
+        "calories": 95,
+        "protein": 0.5,
+        "fat": 0.3,
+        "carbs": 25,
+        "gluten_free": true,
+        "dairy_free": true
+    }
+]
