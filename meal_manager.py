@@ -3,9 +3,7 @@ from food_manager import FoodManager, Food
 def load_wrapper(func):
     def wrapper(*args, **kwargs):
         print(f"Calling {func.__name__} with args: {args}, kwargs: {kwargs}")
-        result = func(*args, **kwargs)
-        print(f"Finished {func.__name__}")
-        return result
+        return func(*args, **kwargs)
     return wrapper
 
 class Meals(): 
@@ -27,6 +25,17 @@ class Meals():
             total["carbs"] += food.carbs
         return total
 
+class Breakfast(Meals): #2.1.3
+    def __init__(self, foods: list[Food]):
+        super().__init__("Breakfast", foods)
+
+class Lunch(Meals):
+    def __init__(self, foods: list[Food]):
+        super().__init__("Lunch", foods)
+
+class Dinner(Meals):
+    def __init__(self, foods: list[Food]):
+        super().__init__("Dinner", foods)
 
 class MealManager:
     def __init__(self):
